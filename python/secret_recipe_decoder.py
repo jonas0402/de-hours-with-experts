@@ -54,18 +54,58 @@ class Ingredient():
 def decode_string(str):
     """Given a string named str, use the Caesar encoding above to return the decoded string."""
     # TODO: implement me
-    return '1 cup'
+    
+    decoded_string = ''
+
+    for string in str.split(' '):
+        decoded_string += ' '
+        for letter in string:
+            if letter in ENCODING.keys():
+                for key,value in ENCODING.items():
+                    if letter in key:
+                            decoded_string += value
+            else:
+                decoded_string += letter
+                
+    decoded_string = decoded_string.replace('#',' ')
+
+    return decoded_string.strip()
 
 
 def decode_ingredient(line):
     """Given an ingredient, decode the amount and description, and return a new Ingredient"""
     # TODO: implement me
-    return Ingredient("1 cup", "butter")
+    
+    if '#' in line:
+        amount, description = line.split('#')
 
+    def parser(recipe_word:str) -> str:
+        """ Helper function to decode and parse amount and description separately"""
+        
+        decoded_line_helper = ''
 
+        for word in recipe_word.split(' '):
+            decoded_line_helper += ' '
+            decoded_line_helper += decode_string(word)
+
+        return decoded_line_helper.strip()
+    
+    amount_decoded = parser(amount)
+    description_decoded = parser(description)
+                                                   
+    return Ingredient(amount_decoded,description_decoded)
+        
 def main():
     """A program that decodes a secret recipe"""
     # TODO: implement me
+    
+    with open('secret_recipe.txt','r') as reader:
+        encoded_recipe = reader.readlines()
+
+    with open('decoded_recipe.txt', 'w') as writer:
+        for line in encoded_recipe:
+            writer.write(f'{decode_string(line)}\n')    
 
 if __name__ == "__main__":
+    
     main()
